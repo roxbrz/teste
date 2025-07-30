@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Ponto</title>
+  <style>
+body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #1e1e1e;
+      color: #fff;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+    .container {
+      background: #2e2e2e;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      padding: 32px 40px;
+      display: flex;
+      gap: 40px;
+      border: none;
+      max-width: 480px;
+      width: 100%;
+      box-sizing: border-box;
+      flex-direction: row;
+    }
+
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-right: 0;
+    }
+
+    .left-panel label {
+      color: #fff;
+      font-size: 18px;
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+
+    .left-panel input[type="time"] {
+      margin-bottom: 16px;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
+      background: #2D7843;
+      color: #fff;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(31,38,135,0.15);
+      transition: background 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .left-panel input[type="time"]:focus {
+      background: #b0b0b0;
+    }
+
+    .left-panel button {
+      margin-top: 8px;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
+      background: #2D7843;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(31,38,135,0.15);
+      transition: background 0.2s;
+    }
+    .left-panel button:hover {
+      background: #b0b0b0;
+    }
+
+    .clock {
+      background: #2D7843;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      font-weight: bold;
+      width: 240px;
+      height: 120px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(31,38,135,0.15);
+      margin-bottom: 12px;
+      max-width: 100%;
+    }
+
+    #relatorio {
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      background: #2D7843;
+      border-radius: 10px;
+      padding: 10px 0;
+      box-shadow: 0 2px 8px rgba(31,38,135,0.10);
+    }
+  </style>
+</head>
+<body>
+
+  
+  <div class="page-wrapper">
+    <h1 style="text-align:center; color:#2D7843; font-size:40px; font-weight:900; margin-bottom:32px; margin-top:0; width:100%;">Calculadora de Jornada</h1>
+    <div class="container">
+    <div class="left-panel">
+      <label for="entradaInput" style="font-weight:bold; margin-bottom:4px;">Entrada</label>
+      <input type="time" id="entradaInput" style="margin-bottom:10px; padding:10px; font-size:14px; font-weight:bold; border:3px solid black;" placeholder="Horário de entrada" oninput="atualizarContador()">
+      <label for="saidaInput" style="font-weight:bold; margin-bottom:4px;">Saída</label>
+      <input type="time" id="saidaInput" style="margin-bottom:10px; padding:10px; font-size:14px; font-weight:bold; border:3px solid black;" placeholder="Horário de saída" oninput="atualizarContador()">
+      <button onclick="limpar()">LIMPAR</button>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <h2 id="tituloHoras" style="color:#fff; font-size:28px; font-weight:700; margin-bottom:8px;">Horas trabalhadas</h2>
+      <div class="clock" id="resultado">00:00</div>
+      <div id="relatorio" style="margin-top:20px; font-size:20px; font-weight:bold;"></div>
+    </div>
+  <style>
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 8px;
+        max-width: 100%;
+      }
+      .clock {
+        font-size: 36px;
+        width: 100%;
+        height: 80px;
+      }
+      .left-panel label {
+        font-size: 16px;
+      }
+      .left-panel input[type="time"] {
+        font-size: 16px;
+        padding: 10px;
+      }
+      .left-panel button {
+        font-size: 16px;
+        padding: 10px;
+      }
+      h1 {
+        font-size: 28px !important;
+        margin-bottom: 18px !important;
+      }
+      #tituloHoras {
+        font-size: 20px !important;
+      }
+      #relatorio {
+        font-size: 16px !important;
+        padding: 8px 0 !important;
+      }
+    }
+  </style>
+  </div>
+
+  <script>
+let timerInterval = null;
+
+function atualizarContador() {
+  const entradaInput = document.getElementById('entradaInput').value;
+  const saidaInput = document.getElementById('saidaInput').value;
+  const relatorioDiv = document.getElementById('relatorio');
+  const tituloHoras = document.getElementById('tituloHoras');
+  if (timerInterval) clearInterval(timerInterval);
+
+  // Título sempre visível
+
+  // Relatório: previsão de saída ou horas extras
+  if (entradaInput) {
+    const [hEntrada, mEntrada] = entradaInput.split(':');
+    let horaPrevista = parseInt(hEntrada);
+    let minPrevisto = parseInt(mEntrada) + 20;
+    horaPrevista += 8 + Math.floor(minPrevisto / 60);
+    minPrevisto = minPrevisto % 60;
+    const saidaPrevista = `${String(horaPrevista).padStart(2, '0')}:${String(minPrevisto).padStart(2, '0')}`;
+
+    // Se já passou do horário previsto, mostra horas extras
+    const agora = new Date();
+    const entrada = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hEntrada), parseInt(mEntrada), 0);
+    const saidaPrevistaDate = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), horaPrevista, minPrevisto, 0);
+    if (agora > saidaPrevistaDate) {
+      // Horas extras realizadas
+      const diffMs = agora - saidaPrevistaDate;
+      const diffMin = Math.floor(diffMs / 60000);
+      const horas = Math.floor(diffMin / 60);
+      const minutos = diffMin % 60;
+      relatorioDiv.textContent = `Horas extras realizadas: ${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
+    } else {
+      relatorioDiv.textContent = `Previsão de saída: ${saidaPrevista}`;
+    }
+  } else {
+    relatorioDiv.textContent = '';
+  }
+
+  // Se ambos preenchidos, calcula diferença
+  if (entradaInput && saidaInput) {
+    const agora = new Date();
+    const [hEntrada, mEntrada] = entradaInput.split(':');
+    const [hSaida, mSaida] = saidaInput.split(':');
+    const entrada = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hEntrada), parseInt(mEntrada), 0);
+    const saida = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hSaida), parseInt(mSaida), 0);
+    const diferenca = calcularDiferenca(entrada, saida);
+    atualizarRelogio(diferenca);
+    return;
+  }
+
+  // Se só entrada, inicia contador em tempo real
+  if (entradaInput && !saidaInput) {
+    const agora = new Date();
+    const [hEntrada, mEntrada] = entradaInput.split(':');
+    const entrada = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hEntrada), parseInt(mEntrada), 0);
+    timerInterval = setInterval(() => {
+      const agoraAtual = new Date();
+      const tempo = calcularDiferenca(entrada, agoraAtual);
+      atualizarRelogio(tempo);
+    }, 1000);
+    // Mostra imediatamente
+    const tempo = calcularDiferenca(entrada, agora);
+    atualizarRelogio(tempo);
+    return;
+  }
+
+  // Se só saída, mostra negativo em relação à jornada padrão
+  if (!entradaInput && saidaInput) {
+    const agora = new Date();
+    const [hSaida, mSaida] = saidaInput.split(':');
+    const saida = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hSaida), parseInt(mSaida), 0);
+    // Jornada padrão: 8h20min
+    const jornadaPadrao = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 8, 20, 0);
+    // Diferença negativa: saída - jornada
+    const diffMs = saida - jornadaPadrao;
+    const diffMin = Math.floor(diffMs / 60000);
+    const horas = Math.floor(diffMin / 60);
+    const minutos = diffMin % 60;
+    const sinal = diffMs < 0 ? '-' : '';
+    atualizarRelogio(`${sinal}${String(Math.abs(horas)).padStart(2, '0')}:${String(Math.abs(minutos)).padStart(2, '0')}`);
+    relatorioDiv.textContent = '';
+    return;
+  }
+
+  // Nenhum preenchido
+  atualizarRelogio("00:00");
+  relatorioDiv.textContent = '';
+}
+
+function limpar() {
+  document.getElementById('entradaInput').value = '';
+  document.getElementById('saidaInput').value = '';
+  if (timerInterval) clearInterval(timerInterval);
+  atualizarRelogio("00:00");
+  document.getElementById('relatorio').textContent = '';
+}
+
+    function atualizarRelogio(texto) {
+      // Se o formato for hh:mm:ss, estiliza os segundos
+      const resultadoDiv = document.getElementById('resultado');
+      if (/^\d{2}:\d{2}:\d{2}$/.test(texto)) {
+        const [hh, mm, ss] = texto.split(':');
+        resultadoDiv.innerHTML = `${hh}:${mm}:<span style="font-size:28px; vertical-align:middle;">${ss}</span>`;
+      } else {
+        resultadoDiv.textContent = texto;
+      }
+    }
+
+    function formatarHora(data) {
+      let horas = String(data.getHours()).padStart(2, '0');
+      let minutos = String(data.getMinutes()).padStart(2, '0');
+      return `${horas}:${minutos}`;
+    }
+
+    function calcularDiferenca(inicio, fim) {
+      const diffMs = fim - inicio;
+      const diffSeg = Math.floor(diffMs / 1000);
+      const horas = Math.floor(diffSeg / 3600);
+      const minutos = Math.floor((diffSeg % 3600) / 60);
+      const segundos = diffSeg % 60;
+      return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+    }
+  </script>
+
+</body>
+</html>
