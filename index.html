@@ -34,6 +34,8 @@ body {
       width: 100%;
       box-sizing: border-box;
       flex-direction: row;
+      flex-wrap: wrap;
+      align-items: stretch;
     }
 
     .left-panel {
@@ -95,12 +97,15 @@ body {
       justify-content: center;
       font-size: 56px;
       font-weight: bold;
-      width: 240px;
+      width: 100%;
+      min-width: 120px;
+      max-width: 240px;
       height: 120px;
       color: #fff;
       box-shadow: 0 2px 8px rgba(31,38,135,0.15);
       margin-bottom: 12px;
-      max-width: 100%;
+      box-sizing: border-box;
+      word-break: break-all;
     }
 
     #relatorio {
