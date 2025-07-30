@@ -265,21 +265,25 @@ function atualizarContador() {
     return;
   }
 
-  // Se só saída, mostra negativo em relação à jornada padrão
+  // Se só saída, calcula horas extras em relação à jornada padrão
   if (!entradaInput && saidaInput) {
     const agora = new Date();
     const [hSaida, mSaida] = saidaInput.split(':');
     const saida = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), parseInt(hSaida), parseInt(mSaida), 0);
     // Jornada padrão: 8h20min
-    const jornadaPadrao = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 8, 20, 0);
-    // Diferença negativa: saída - jornada
-    const diffMs = saida - jornadaPadrao;
+    const jornadaPadraoMs = (8 * 60 + 20) * 60 * 1000;
+    const saidaMs = (parseInt(hSaida) * 60 + parseInt(mSaida)) * 60 * 1000;
+    const diffMs = saidaMs - jornadaPadraoMs;
     const diffMin = Math.floor(diffMs / 60000);
-    const horas = Math.floor(diffMin / 60);
-    const minutos = diffMin % 60;
+    const horas = Math.floor(Math.abs(diffMin) / 60);
+    const minutos = Math.abs(diffMin) % 60;
     const sinal = diffMs < 0 ? '-' : '';
-    atualizarRelogio(`${sinal}${String(Math.abs(horas)).padStart(2, '0')}:${String(Math.abs(minutos)).padStart(2, '0')}`);
-    relatorioDiv.textContent = '';
+    atualizarRelogio(`${sinal}${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`);
+    if (diffMs > 0) {
+      relatorioDiv.textContent = `Horas extras realizadas: ${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
+    } else {
+      relatorioDiv.textContent = '';
+    }
     return;
   }
 
